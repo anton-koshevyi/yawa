@@ -1,0 +1,45 @@
+name: CI for File module
+
+on:
+  push:
+    paths:
+      - 'yawa-file/**'
+    branches:
+      - '**'
+  pull_request:
+    paths:
+      - 'yawa-file/**'
+  workflow_dispatch:
+
+jobs:
+  main:
+    runs-on: ubuntu-22.04
+    env:
+      MAVEN_OPTS: -Dmaven.repo.local=.m2/repository/
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '8'
+
+      - name: Setup cache for Maven
+        uses: actions/cache@v3
+        with:
+          path: |
+            .m2/repository
+            .mvn/wrapper/maven-wrapper.jar
+          key: cache/maven/${{hashFiles('**/pom.xml')}}
+          restore-keys: cache/maven
+
+      - name: Compile
+        run: ./mvnw --projects :yawa-file test-compile
+
+      - name: Test
+        run: ./mvnw --projects :yawa-file test
+
+      - name: Check
+        run: ./mvnw --projects :yawa-file checkstyle:check
