@@ -1,8 +1,10 @@
 package com.example.yawa.application.config;
 
+import java.security.Security;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -24,6 +26,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   private final HandlerExceptionResolver handlerExceptionResolver;
   private final AuthorizationFilter authorizationFilter;
+
+  static {
+    Security.addProvider(new BouncyCastleProvider());
+  }
 
   @Autowired
   public SecurityConfig(
