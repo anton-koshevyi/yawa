@@ -20,6 +20,7 @@ public class ApplicationProperties {
   public static class AwsProperties {
 
     private S3Properties s3;
+    private SnsProperties sns;
 
 
     @Getter
@@ -34,6 +35,32 @@ public class ApplicationProperties {
       public static class BucketProperties {
 
         private String file;
+
+      }
+
+    }
+
+    @Getter
+    @Setter
+    public static class SnsProperties {
+
+      private TopicProperties topic;
+
+
+      @Getter
+      @Setter
+      public static class TopicProperties {
+
+        private TopicSpecificProperties fileUpload;
+
+
+        @Getter
+        @Setter
+        public static class TopicSpecificProperties {
+
+          private String arn;
+
+        }
 
       }
 

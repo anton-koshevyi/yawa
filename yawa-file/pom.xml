@@ -79,6 +79,12 @@
       <version>1.7.30</version>
     </dependency>
 
+    <!-- Messaging -->
+    <dependency>
+      <groupId>software.amazon.awssdk</groupId>
+      <artifactId>sns</artifactId>
+    </dependency>
+
     <!-- Security -->
     <dependency>
       <groupId>io.jsonwebtoken</groupId>
