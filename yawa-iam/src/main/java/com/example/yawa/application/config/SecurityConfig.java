@@ -26,12 +26,14 @@ import com.example.springframework.security.access.expression.SecurityExpression
 import com.example.springframework.security.access.expression.method.SecurityExpressionHandler;
 import com.example.yawa.application.config.ApplicationProperties.TokenProperties;
 import com.example.yawa.application.filter.AuthorizationFilter;
+import com.example.yawa.application.filter.SnsSignatureFilter;
 
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   private final HandlerExceptionResolver handlerExceptionResolver;
   private final AuthorizationFilter authorizationFilter;
+  private final SnsSignatureFilter snsSignatureFilter;
 
   static {
     Security.addProvider(new BouncyCastleProvider());
@@ -40,11 +42,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   @Autowired
   public SecurityConfig(
       HandlerExceptionResolver handlerExceptionResolver,
-      AuthorizationFilter authorizationFilter
+      AuthorizationFilter authorizationFilter,
+      SnsSignatureFilter snsSignatureFilter
   ) {
     super(true);
     this.handlerExceptionResolver = handlerExceptionResolver;
     this.authorizationFilter = authorizationFilter;
+    this.snsSignatureFilter = snsSignatureFilter;
   }
 
   @Bean
@@ -68,6 +72,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .exceptionHandling(c -> c
             .authenticationEntryPoint(this::forwardExceptionHandling)
             .accessDeniedHandler(this::forwardExceptionHandling))
+        .addFilterAfter(snsSignatureFilter, SecurityContextHolderAwareRequestFilter.class)
         .addFilterAfter(authorizationFilter, SecurityContextHolderAwareRequestFilter.class);
   }
 
