@@ -17,6 +17,9 @@ import software.amazon.awssdk.services.sfn.model.ExecutionStatus;
 import software.amazon.awssdk.services.sfn.model.StateMachineDeletingException;
 import software.amazon.awssdk.services.sfn.model.StateMachineType;
 
+import com.example.yawa.application.exception.NotFoundException;
+import com.example.yawa.file.schedule.exception.NotFoundFileScheduleByFileIdException;
+
 @Service
 public class FileScheduleServiceSfn
     implements FileScheduleService, InitializingBean, DisposableBean {
@@ -54,6 +57,19 @@ public class FileScheduleServiceSfn
 
     startExecution(executionName, input);
     logger.info("Delete has been scheduled for file with ID: {}", fileId);
+  }
+
+  @Override
+  public void postponeDeletion(String fileId) throws NotFoundException {
+    logger.debug("Postpone of delete for file with ID: {}", fileId);
+
+    ExecutionListItem execution = findExecutionByFileId(fileId);
+    String executionArn = execution.executionArn();
+
+    stopExecution(executionArn, "File deletion has been postponed by user");
+    redriveExecution(executionArn);
+
+    logger.info("Delete has been postponed for file with ID: {}", fileId);
   }
 
   @Override
@@ -135,6 +151,21 @@ public class FileScheduleServiceSfn
         .stopExecution(ser -> ser
             .executionArn(executionArn)
             .cause(cause));
+  }
+
+  private void redriveExecution(String executionArn) {
+    sfnClient
+        .redriveExecution(rer -> rer
+            .executionArn(executionArn));
+  }
+
+  private ExecutionListItem findExecutionByFileId(String fileId) throws NotFoundException {
+    String executionName = Assembler.assembleExecutionName(fileId);
+
+    return findAllExecutions(ExecutionStatus.RUNNING).stream()
+        .filter(execution -> execution.name().equals(executionName))
+        .findAny()
+        .orElseThrow(() -> new NotFoundFileScheduleByFileIdException(fileId));
   }
 
   private List<ExecutionListItem> findAllExecutions(ExecutionStatus status) {
