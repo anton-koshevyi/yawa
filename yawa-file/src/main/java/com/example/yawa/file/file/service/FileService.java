@@ -10,6 +10,8 @@ public interface FileService {
 
   File save(UUID userId, String filename, String contentType, byte[] content);
 
+  File delete(String id) throws NotFoundException;
+
   File findById(String id) throws NotFoundException;
 
   List<File> findAllByUserId(UUID userId);

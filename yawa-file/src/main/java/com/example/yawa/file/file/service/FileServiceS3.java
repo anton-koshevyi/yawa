@@ -83,6 +83,20 @@ public class FileServiceS3 implements FileService {
   }
 
   @Override
+  public File delete(String id) throws NotFoundException {
+    logger.debug("Delete of file by ID: {}", id);
+
+    File file = this.findById(id);
+    s3Client
+        .deleteObject(dor -> dor
+            .bucket(bucket)
+            .key(id));
+
+    logger.info("File has been deleted by ID: {}", id);
+    return file;
+  }
+
+  @Override
   public File findById(String id) throws NotFoundException {
     try {
       return doFindById(id);

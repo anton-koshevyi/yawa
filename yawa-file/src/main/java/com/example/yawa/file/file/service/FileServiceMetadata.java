@@ -49,6 +49,25 @@ public class FileServiceMetadata implements FileService {
   }
 
   @Override
+  public File delete(String id) throws NotFoundException {
+    File file = fileService.delete(id);
+    logger.debug("Delete of metadata for file with ID: {}", id);
+
+    Optional<File> metadataOptional = fileMetadataRepository.findById(id);
+
+    if (!metadataOptional.isPresent()) {
+      logger.warn("No metadata for file with ID: {}", id);
+      return file;
+    }
+
+    File metadata = metadataOptional.get();
+    fileMetadataRepository.delete(metadata);
+
+    logger.info("Metadata has been deleted for file: {}", metadata);
+    return file;
+  }
+
+  @Override
   public File findById(String id) throws NotFoundException {
     Optional<File> metadataOptional = fileMetadataRepository.findById(id);
 
