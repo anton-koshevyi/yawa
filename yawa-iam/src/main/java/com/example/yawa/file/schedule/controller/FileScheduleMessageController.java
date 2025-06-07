@@ -12,18 +12,22 @@ import org.springframework.web.bind.annotation.RestController;
 import software.amazon.awssdk.services.sns.SnsClient;
 
 import com.example.yawa.file.file.model.File;
+import com.example.yawa.file.schedule.service.FileScheduleService;
 
 @RestController
 public class FileScheduleMessageController {
 
+  private final FileScheduleService fileScheduleService;
   private final SnsClient snsClient;
   private final ObjectMapper snsMessageMapper;
 
   @Autowired
   public FileScheduleMessageController(
+      FileScheduleService fileScheduleService,
       SnsClient snsClient,
       ObjectMapper snsMessageMapper
   ) {
+    this.fileScheduleService = fileScheduleService;
     this.snsClient = snsClient;
     this.snsMessageMapper = snsMessageMapper;
   }
@@ -56,7 +60,7 @@ public class FileScheduleMessageController {
     File file = readMessage(fileJson, File.class);
     String fileId = file.getId();
 
-    // TODO: Schedule file delete
+    fileScheduleService.createDeletion(fileId);
   }
 
   private Map<String, String> readMessage(String message) {

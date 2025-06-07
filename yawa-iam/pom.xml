@@ -43,6 +43,10 @@
       <version>1.18.16</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>software.amazon.awssdk</groupId>
+      <artifactId>sfn</artifactId>
+    </dependency>
 
     <!-- Data -->
     <dependency>

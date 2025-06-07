@@ -13,6 +13,7 @@ public class ApplicationProperties {
 
   private String apiBaseUrl;
   private AwsProperties aws;
+  private ScheduleProperties schedule;
 
 
   @Getter
@@ -20,6 +21,7 @@ public class ApplicationProperties {
   public static class AwsProperties {
 
     private SnsProperties sns;
+    private SfnProperties sfn;
 
 
     @Getter
@@ -34,6 +36,7 @@ public class ApplicationProperties {
       public static class TopicProperties {
 
         private TopicSpecificProperties fileUpload;
+        private TopicSpecificProperties fileDelete;
 
 
         @Getter
@@ -47,6 +50,50 @@ public class ApplicationProperties {
       }
 
     }
+
+    @Getter
+    @Setter
+    public static class SfnProperties {
+
+      private StateMachineProperties stateMachine;
+
+
+      @Getter
+      @Setter
+      public static class StateMachineProperties {
+
+        private StateMachineSpecificProperties fileDeleteScheduler;
+
+
+        @Getter
+        @Setter
+        public static class StateMachineSpecificProperties {
+
+          private String name;
+          private StateMachineRoleProperties role;
+
+
+          @Getter
+          @Setter
+          public static class StateMachineRoleProperties {
+
+            private String arn;
+
+          }
+
+        }
+
+      }
+
+    }
+
+  }
+
+  @Getter
+  @Setter
+  public static class ScheduleProperties {
+
+    private Integer fileDeletionSeconds;
 
   }
 

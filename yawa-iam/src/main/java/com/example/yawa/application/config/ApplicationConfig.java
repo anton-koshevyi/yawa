@@ -12,6 +12,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import software.amazon.awssdk.services.sfn.SfnClient;
 import software.amazon.awssdk.services.sns.SnsClient;
 
 @Configuration
@@ -47,6 +48,11 @@ public class ApplicationConfig {
         .setDefaultPropertyInclusion(Include.NON_NULL)
         .enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
         .disable(SerializationFeature.INDENT_OUTPUT);
+  }
+
+  @Bean
+  public SfnClient sfnClient() {
+    return SfnClient.create();
   }
 
 }
