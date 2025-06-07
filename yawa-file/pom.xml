@@ -81,6 +81,12 @@
 
     <!-- Messaging -->
     <dependency>
+      <!-- Signature verification -->
+      <groupId>com.amazonaws</groupId>
+      <artifactId>aws-java-sdk-sns</artifactId>
+      <version>1.12.785</version>
+    </dependency>
+    <dependency>
       <groupId>software.amazon.awssdk</groupId>
       <artifactId>sns</artifactId>
     </dependency>

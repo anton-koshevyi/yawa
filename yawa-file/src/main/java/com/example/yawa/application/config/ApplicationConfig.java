@@ -3,6 +3,7 @@ package com.example.yawa.application.config;
 import java.time.Clock;
 import java.util.TimeZone;
 
+import com.amazonaws.services.sns.message.SnsMessageManager;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -43,6 +44,11 @@ public class ApplicationConfig {
   @Bean
   public SnsClient snsClient() {
     return SnsClient.create();
+  }
+
+  @Bean // Signature verification only
+  public SnsMessageManager snsMessageManager(SnsClient snsClient) {
+    return new SnsMessageManager(snsClient.serviceClientConfiguration().region().id());
   }
 
   @Bean

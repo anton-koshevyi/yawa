@@ -2,20 +2,29 @@ package com.example.yawa.file.file.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 import software.amazon.awssdk.services.sns.SnsClient;
+import software.amazon.awssdk.services.sns.model.SubscribeResponse;
 
 import com.example.yawa.file.file.dto.event.FileUploadEvent;
 import com.example.yawa.file.file.model.File;
 
 @Component
-public class FileEventController {
+public class FileEventController implements InitializingBean, DisposableBean {
 
   private final SnsClient snsClient;
   private final ObjectMapper snsMessageMapper;
   private final String fileUploadTopicArn;
+  private final String fileDeleteTopicArn;
+  private final String apiBaseUrl;
+
+  private String fileDeleteSubscriptionArn;
 
   @Autowired
   public FileEventController(
@@ -26,6 +35,39 @@ public class FileEventController {
     this.snsClient = snsClient;
     this.snsMessageMapper = snsMessageMapper;
     this.fileUploadTopicArn = properties.fileUploadTopicArn;
+    this.fileDeleteTopicArn = properties.fileDeleteTopicArn;
+    this.apiBaseUrl = properties.apiBaseUrl;
+  }
+
+  @Override
+  public void afterPropertiesSet() {
+    subscribeToDelete();
+  }
+
+  @Override
+  public void destroy() {
+    unsubscribeFromDelete();
+  }
+
+  public void subscribeToDelete() {
+    UriComponents deleteEndpoint = UriComponentsBuilder
+        .fromHttpUrl(apiBaseUrl)
+        .path("/files")
+        .build();
+
+    SubscribeResponse response = snsClient
+        .subscribe(sr -> sr
+            .topicArn(fileDeleteTopicArn)
+            .protocol(deleteEndpoint.getScheme())
+            .endpoint(deleteEndpoint.toUriString())
+            .returnSubscriptionArn(true));
+    this.fileDeleteSubscriptionArn = response.subscriptionArn();
+  }
+
+  private void unsubscribeFromDelete() {
+    snsClient
+        .unsubscribe(ur -> ur
+            .subscriptionArn(this.fileDeleteSubscriptionArn));
   }
 
   @EventListener
@@ -50,9 +92,17 @@ public class FileEventController {
   public static class FileEventControllerProperties {
 
     private final String fileUploadTopicArn;
+    private final String fileDeleteTopicArn;
+    private final String apiBaseUrl;
 
-    public FileEventControllerProperties(String fileUploadTopicArn) {
+    public FileEventControllerProperties(
+        String fileUploadTopicArn,
+        String fileDeleteTopicArn,
+        String apiBaseUrl
+    ) {
       this.fileUploadTopicArn = fileUploadTopicArn;
+      this.fileDeleteTopicArn = fileDeleteTopicArn;
+      this.apiBaseUrl = apiBaseUrl;
     }
 
   }

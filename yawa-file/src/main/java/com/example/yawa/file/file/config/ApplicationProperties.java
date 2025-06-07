@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties("application")
 public class ApplicationProperties {
 
+  private String apiBaseUrl;
   private AwsProperties aws;
   private FileProperties file;
 
@@ -52,6 +53,7 @@ public class ApplicationProperties {
       public static class TopicProperties {
 
         private TopicSpecificProperties fileUpload;
+        private TopicSpecificProperties fileDelete;
 
 
         @Getter
