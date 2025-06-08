@@ -10,6 +10,7 @@
   <packaging>pom</packaging>
 
   <modules>
+    <module>yawa-email</module>
     <module>yawa-file</module>
     <module>yawa-iam</module>
   </modules>
