@@ -20,9 +20,26 @@ public class ApplicationProperties {
   @Setter
   public static class AwsProperties {
 
+    private LambdaProperties lambda;
     private S3Properties s3;
     private SnsProperties sns;
 
+
+    @Getter
+    @Setter
+    public static class LambdaProperties {
+
+      private LambdaSpecificProperties email;
+
+      @Getter
+      @Setter
+      public static class LambdaSpecificProperties {
+
+        private String arn;
+
+      }
+
+    }
 
     @Getter
     @Setter
@@ -52,6 +69,7 @@ public class ApplicationProperties {
       @Setter
       public static class TopicProperties {
 
+        private TopicSpecificProperties email;
         private TopicSpecificProperties fileUpload;
         private TopicSpecificProperties fileDelete;
 
