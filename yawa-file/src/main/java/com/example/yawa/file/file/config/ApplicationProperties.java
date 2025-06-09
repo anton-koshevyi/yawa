@@ -23,6 +23,7 @@ public class ApplicationProperties {
     private LambdaProperties lambda;
     private S3Properties s3;
     private SnsProperties sns;
+    private SqsProperties sqs;
 
 
     @Getter
@@ -79,6 +80,33 @@ public class ApplicationProperties {
         public static class TopicSpecificProperties {
 
           private String arn;
+
+        }
+
+      }
+
+    }
+
+    @Getter
+    @Setter
+    public static class SqsProperties {
+
+      private QueueProperties queue;
+
+
+      @Getter
+      @Setter
+      public static class QueueProperties {
+
+        private QueueSpecificProperties userGetById;
+
+
+        @Getter
+        @Setter
+        public static class QueueSpecificProperties {
+
+          private String url;
+          private String groupId;
 
         }
 

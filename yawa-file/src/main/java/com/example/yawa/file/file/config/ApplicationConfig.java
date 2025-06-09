@@ -6,10 +6,13 @@ import org.springframework.context.annotation.Configuration;
 
 import com.example.yawa.file.file.config.ApplicationProperties.AwsProperties;
 import com.example.yawa.file.file.config.ApplicationProperties.AwsProperties.SnsProperties.TopicProperties;
+import com.example.yawa.file.file.config.ApplicationProperties.AwsProperties.SqsProperties.QueueProperties;
+import com.example.yawa.file.file.config.ApplicationProperties.AwsProperties.SqsProperties.QueueProperties.QueueSpecificProperties;
 import com.example.yawa.file.file.controller.FileEventController.FileEventControllerProperties;
 import com.example.yawa.file.file.repository.FileMetadataRepository.FileMetadataRepositoryProperties;
 import com.example.yawa.file.file.service.EmailServiceRemote.EmailServiceRemoteProperties;
 import com.example.yawa.file.file.service.FileServiceS3.FileServiceS3Properties;
+import com.example.yawa.iam.user.service.UserServiceRemote.UserServiceRemoteProperties;
 
 @Configuration("fileApplicationConfig")
 public class ApplicationConfig {
@@ -44,6 +47,19 @@ public class ApplicationConfig {
     return new EmailServiceRemoteProperties(
         awsProperties.getSns().getTopic().getEmail().getArn(),
         awsProperties.getLambda().getEmail().getArn()
+    );
+  }
+
+  @Bean
+  public UserServiceRemoteProperties userServiceRemoteProperties(
+      ApplicationProperties properties
+  ) {
+    QueueProperties queueProperties = properties.getAws().getSqs().getQueue();
+    QueueSpecificProperties userGetByIdQueueProperties = queueProperties.getUserGetById();
+
+    return new UserServiceRemoteProperties(
+        userGetByIdQueueProperties.getUrl(),
+        userGetByIdQueueProperties.getGroupId()
     );
   }
 

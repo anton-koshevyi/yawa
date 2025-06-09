@@ -4,7 +4,10 @@ import java.time.Clock;
 import java.util.TimeZone;
 
 import com.amazonaws.services.sns.message.SnsMessageManager;
+import com.amazonaws.services.sqs.AmazonSQSResponder;
+import com.amazonaws.services.sqs.AmazonSQSResponderClientBuilder;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -14,6 +17,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import software.amazon.awssdk.services.sfn.SfnClient;
 import software.amazon.awssdk.services.sns.SnsClient;
+import software.amazon.awssdk.services.sqs.SqsClient;
 
 @Configuration
 public class ApplicationConfig {
@@ -53,6 +57,26 @@ public class ApplicationConfig {
   @Bean
   public SfnClient sfnClient() {
     return SfnClient.create();
+  }
+
+  @Bean
+  public SqsClient sqsClient() {
+    return SqsClient.create();
+  }
+
+  @Bean
+  public AmazonSQSResponder sqsResponder() {
+    return AmazonSQSResponderClientBuilder.defaultClient();
+  }
+
+  @Bean
+  public ObjectMapper sqsMessageMapper() {
+    return new ObjectMapper()
+        .registerModule(new JavaTimeModule())
+        .setDefaultPropertyInclusion(Include.NON_NULL)
+        .enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        .disable(SerializationFeature.INDENT_OUTPUT);
   }
 
 }

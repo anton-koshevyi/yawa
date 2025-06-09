@@ -93,6 +93,21 @@
 
     <!-- Messaging -->
     <dependency>
+      <groupId>com.amazonaws</groupId>
+      <artifactId>amazon-sqs-java-temporary-queues-client</artifactId>
+      <version>2.0.0</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
       <!-- Signature verification -->
       <groupId>com.amazonaws</groupId>
       <artifactId>aws-java-sdk-sns</artifactId>
@@ -101,6 +116,10 @@
     <dependency>
       <groupId>software.amazon.awssdk</groupId>
       <artifactId>sns</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>software.amazon.awssdk</groupId>
+      <artifactId>sqs</artifactId>
     </dependency>
 
     <!-- Security -->

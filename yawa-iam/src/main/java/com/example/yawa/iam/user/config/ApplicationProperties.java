@@ -24,6 +24,7 @@ public class ApplicationProperties {
 
     private LambdaProperties lambda;
     private SnsProperties sns;
+    private SqsProperties sqs;
 
 
     @Getter
@@ -67,6 +68,33 @@ public class ApplicationProperties {
       }
 
     }
+
+    @Getter
+    @Setter
+    public static class SqsProperties {
+
+      private QueueProperties queue;
+
+
+      @Getter
+      @Setter
+      public static class QueueProperties {
+
+        private QueueSpecificProperties userGetById;
+
+
+        @Getter
+        @Setter
+        public static class QueueSpecificProperties {
+
+          private String url;
+
+        }
+
+      }
+
+    }
+
 
   }
 
