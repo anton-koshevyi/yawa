@@ -1,7 +1,5 @@
 package com.example.yawa.iam.session.config;
 
-import java.time.Duration;
-
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -14,8 +12,6 @@ import org.springframework.stereotype.Component;
 public class ApplicationProperties {
 
   private AwsProperties aws;
-  private TokenProperties token;
-  private ScheduleProperties schedule;
 
 
   @Getter
@@ -37,7 +33,6 @@ public class ApplicationProperties {
       public static class SecretProperties {
 
         private SecretSpecificProperties sessionAccess;
-        private SecretSpecificProperties sessionRefresh;
 
 
         @Getter
@@ -51,23 +46,6 @@ public class ApplicationProperties {
       }
 
     }
-
-  }
-
-  @Getter
-  @Setter
-  public static class TokenProperties {
-
-    private Integer sessionAccessExpirationSeconds;
-    private Integer sessionRefreshExpirationSeconds;
-
-  }
-
-  @Getter
-  @Setter
-  public static class ScheduleProperties {
-
-    private Duration sessionRefreshTokenDeletionRate;
 
   }
 
