@@ -1,0 +1,45 @@
+name: CI for IAM module
+
+on:
+  push:
+    paths:
+      - 'yawa-iam/**'
+    branches:
+      - '**'
+  pull_request:
+    paths:
+      - 'yawa-iam/**'
+  workflow_dispatch:
+
+jobs:
+  main:
+    runs-on: ubuntu-22.04
+    env:
+      MAVEN_OPTS: -Dmaven.repo.local=.m2/repository/
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '8'
+
+      - name: Setup cache for Maven
+        uses: actions/cache@v3
+        with:
+          path: |
+            .m2/repository
+            .mvn/wrapper/maven-wrapper.jar
+          key: cache/maven/${{hashFiles('**/pom.xml')}}
+          restore-keys: cache/maven
+
+      - name: Compile
+        run: ./mvnw --projects :yawa-iam test-compile
+
+      - name: Test
+        run: ./mvnw --projects :yawa-iam test
+
+      - name: Check
+        run: ./mvnw --projects :yawa-iam checkstyle:check
